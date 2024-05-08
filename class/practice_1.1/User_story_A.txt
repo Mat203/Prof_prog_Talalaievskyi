@@ -1,0 +1,28 @@
+User Story:
+As a cool programmer guy I want to have an ability to find the biggest negative value from the provided list of numbers. 
+It will allow me to make my manual calculation faster.
+
+Requirements:
+
+1. Input List: System has to accept a list of numbers provided by the user
+   
+2. Data Validation: System has to validate that the input list contains a number
+
+3. Scalability: System should be scalable to handle a varying number of inputs efficiently
+   
+3. Identification of Negative Values: System shall identify and isolate negative values from the provided list
+
+5. Number List: System has to save numbers in a special list
+   
+4. Identification of the Largest Negative Value: The system shall identify the largest negative value from the list of negative numbers.
+   
+5. Output Display: The system shall display the identified largest negative value to the user
+   
+6. Error Handling: 
+ 1. If the provided list contains no negative values, the system shall notify the user appropriately.
+ 2. If the provided list contains not only negative numbers (positive number or string), the system should skip this.
+ 3. If the provided list contains no balues, the system should modify a user.
+   
+10. Documentation: Comprehensive documentation shall be provided
+   
+11. Testing: Testing shall be conducted to ensure the accuracy and reliability of the functionality under various scenarios.

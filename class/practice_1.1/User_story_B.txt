@@ -1,0 +1,27 @@
+User Story:
+As a cool mathematician, I want to be able to get roots of the quadratic equation ax^2 + bx + c. It will allow me to avoid hard calculations related to the determinant.
+
+Requirements:
+
+1. Input Coefficients: System shall accept the coefficients (a, b, and c) of the quadratic equation ax^2 + bx + c provided by the user
+
+2. Data Validation: System shall validate that the input coefficients are numerical values. (not strings or empty values)
+
+3. Quadratic Formula Calculation: System shall apply the quadratic formula to calculate the roots of the quadratic equation
+
+4. Discriminant Calculation: System shall compute the discriminant (b^2 - 4ac) to determine the nature of the roots (real, complex, or repeated)
+
+5. Roots Calculation: Based on the discriminant value, the system shall calculate the roots of the quadratic equation as follows:
+   - If the discriminant is positive, the system shall calculate two real roots.
+   - If the discriminant is zero, the system shall calculate two identical real roots.
+   - If the discriminant is negative, the system shall calculate two complex roots. (if it is needed for user -- otherwise just print "no roots")
+
+6. Output Display: The system shall display the calculated roots of the quadratic equation to the user
+
+7. Error Handling: The system shall handle scenarios where the quadratic equation has no real roots (i.e., the discriminant is negative) by notifying the user appropriately
+
+8. Performa9nce: The system shall execute the calculations efficiently, even for equations with large coefficients
+
+9. Documentation: Comprehensive documentation shall be provided to guide users 
+
+10. Testing: Testing shall be conducted to ensure the accuracy.
