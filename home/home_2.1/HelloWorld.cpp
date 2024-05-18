@@ -1,51 +1,86 @@
 #include <iostream>
-#include <fstream>
-#include <string>
 #include <unordered_map>
+#include <string>
 #include <sstream>
+#include <fstream>
+#include <format>
 
-const std::string FILENAME = "user_stats.txt";
+constexpr char EXIT_COMMAND[] = "exit";
+constexpr char DELETE_COMMAND[] = "delete";
+constexpr char BREAD_COMMAND[] = "bread";
+constexpr char INPUT_PROMPT[] = "Enter input: ";
+constexpr char EMPTY_INPUT_ERROR[] = "Input cannot be empty. Please try again.\n";
+constexpr char ALL_HISTORY_DELETED[] = "All history has been deleted.\n";
+constexpr char STATS_RESET[] = "Statistics for {} have been reset.\n";
+constexpr char WELCOME_MESSAGE[] = "Welcome, {}!\n";
+constexpr char HELLO_AGAIN_MESSAGE[] = "Hello again({}), {}!\n";
+constexpr char EXITING_PROGRAM[] = "Exiting the program.\n";
+constexpr char FILENAME[] = "user_stats.txt";
 
-std::unordered_map<std::string, int> readStats() {
-    std::unordered_map<std::string, int> stats;
-    std::ifstream infile(FILENAME);
-    std::string line;
-    while (std::getline(infile, line)) {
-        std::istringstream iss(line);
+class StatsManager {
+public:
+    StatsManager(const std::string& filename) : filename_(filename) {
+        readStats();
+    }
+
+    void readStats() {
+        stats_.clear();
+        std::ifstream infile(filename_);
         std::string name;
         int count;
-        if (iss >> name >> count) {
-            stats[name] = count;
+        while (infile >> name >> count) {
+            stats_[name] = count;
         }
     }
-    return stats;
-}
 
-void writeStats(const std::unordered_map<std::string, int>& stats) {
-    std::ofstream outfile(FILENAME, std::ios::trunc);
-    for (const auto& pair : stats) {
-        outfile << pair.first << " " << pair.second << "\n";
+    void writeStats() const {
+        std::ofstream outfile(filename_, std::ios::trunc);
+        for (const auto& pair : stats_) {
+            outfile << std::format("{} {}\n", pair.first, pair.second);
+        }
     }
-}
 
-void deleteStats() {
-    std::ofstream outfile(FILENAME, std::ios::trunc);
-}
+    void deleteStats() {
+        stats_.clear();
+        std::ofstream outfile(filename_, std::ios::trunc);  
+    }
+
+    void incrementStat(const std::string& name) {
+        if (stats_.find(name) == stats_.end()) {
+            stats_[name] = 1;
+            std::cout << std::format(WELCOME_MESSAGE, name);
+        } else {
+            stats_[name]++;
+            std::cout << std::format(HELLO_AGAIN_MESSAGE, stats_[name], name);
+        }
+        writeStats();
+    }
+
+    void deleteStat(const std::string& name) {
+        stats_.erase(name);
+        writeStats();
+        std::cout << std::format(STATS_RESET, name);
+    }
+
+private:
+    std::unordered_map<std::string, int> stats_;
+    std::string filename_;
+};
 
 void displayUsage() {
-    std::cerr << "Usage: <name> or <name> delete or bread\n";
+    std::cerr << "Invalid command. Usage: <name> delete or bread \n";
 }
 
 int main() {
-    std::unordered_map<std::string, int> stats = readStats();
-    
+    StatsManager statsManager(FILENAME);
+
     while (true) {
-        std::cout << "Enter input: ";
+        std::cout << INPUT_PROMPT;
         std::string input;
         std::getline(std::cin, input);
 
         if (input.empty()) {
-            std::cerr << "Input cannot be empty. Please try again.\n";
+            std::cerr << EMPTY_INPUT_ERROR;
             continue;
         }
 
@@ -53,39 +88,28 @@ int main() {
         std::string name, command;
         iss >> name >> command;
 
-        if (name == "bread") {
-            deleteStats();
-            stats.clear();
-            std::cout << "All history has been deleted.\n";
+        if (name == BREAD_COMMAND) {
+            statsManager.deleteStats();
+            std::cout << ALL_HISTORY_DELETED;
             continue;
         }
 
-        if (command == "delete") {
-            stats.erase(name);
-            writeStats(stats);
-            std::cout << "Statistics for " << name << " have been reset.\n";
+        if (command == DELETE_COMMAND) {
+            statsManager.deleteStat(name);
             continue;
         }
 
-        if (name == "exit") {
-            std::cout << "Exiting the program.\n";
+        if (name == EXIT_COMMAND) {
+            std::cout << EXITING_PROGRAM;
             break;
         }
 
-        if (command != "" && command != "delete") {
+        if (!command.empty() && command != DELETE_COMMAND) {
             displayUsage();
             continue;
         }
 
-        if (stats.find(name) == stats.end()) {
-            stats[name] = 1;
-            std::cout << "Welcome, " << name << "!\n";
-        } else {
-            stats[name]++;
-            std::cout << "Hello again(" << stats[name] << "), " << name << "!\n";
-        }
-
-        writeStats(stats);
+        statsManager.incrementStat(name);
     }
 
     return 0;
