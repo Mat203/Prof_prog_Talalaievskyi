@@ -23,3 +23,32 @@ double Triangle::calculateArea() const {
     double s = (a + b + c) / 2.0;
     return std::sqrt(s * (s - a) * (s - b) * (s - c));
 }
+
+RGBColor::RGBColor(int red, int green, int blue) : r(red), g(green), b(blue) {
+    if (r < 0 || r > 255 || g < 0 || g > 255 || b < 0 || b > 255) {
+        throw std::invalid_argument("Error: RGB values must be in the range 0-255.");
+    }
+}
+
+RGBColor RGBColor::generateMagicColor() const {
+    int newR = (r / 2) - 1;
+    int newG = (g * 2) - 2;
+    int newB = b;
+
+    newR = std::max(0, std::min(255, newR));
+    newG = std::max(0, std::min(255, newG));
+
+    return RGBColor(newR, newG, newB);
+}
+
+int RGBColor::getR() const {
+    return r;
+}
+
+int RGBColor::getG() const {
+    return g;
+}
+
+int RGBColor::getB() const {
+    return b;
+}

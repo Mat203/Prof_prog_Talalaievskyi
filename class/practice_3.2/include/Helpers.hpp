@@ -14,3 +14,16 @@ public:
 
     double calculateArea() const;
 };
+
+class RGBColor {
+private:
+    int r, g, b;
+
+public:
+    RGBColor(int red, int green, int blue);
+    RGBColor generateMagicColor() const;
+
+    int getR() const;
+    int getG() const;
+    int getB() const;
+};
