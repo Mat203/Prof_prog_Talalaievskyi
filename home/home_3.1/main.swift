@@ -3,15 +3,14 @@ func calculateValue(x: Double, y: Double, z: Double) -> Double {
 
     if product != 0 {
         return 1 / product
-    } else {
-        let sum = x + y + z
-
-        if sum != 0 {
-            return 1 / sum
-        } else {
-            return x + (y + 1) * (z - 1)
-        }
     }
+
+    let sum = x + y + z
+    if sum != 0 {
+        return 1 / sum
+    }
+
+    return x + (y + 1) * (z - 1)
 }
 
 func main() {
@@ -25,4 +24,3 @@ func main() {
 }
 
 main()
-
