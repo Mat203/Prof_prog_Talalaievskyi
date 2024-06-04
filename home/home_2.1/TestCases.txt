@@ -1,0 +1,43 @@
+Test Case 1:
+Step 1: Execute program ./main; Expected Result: Program starts
+Step 2: User should enter a name "Alice"; Expected Result: Program should display "Hello, Alice"
+Step 3: Observe the output of the file "user_stats.txt"; Expected Result: File contains a single line "Alice 1"
+Step 4: User enters "exit"; Expected Result: Program displays "Exiting the program.", program stops
+
+Test Case 2:
+Step 1: Execute program ./main; Expected Result: Program starts
+Step 2: Enter the name "Vova"; Expected Result: Program should display "Hello, Vova"
+Step 3: Observe the output of the file "user_stats.txt"; Expected Result: File contains a single line "Vova 1"
+Step 4: Enter the name "Frank"; Expected Result: Program should display "Hello, Frank"
+Step 5: Observe the output of the file "user_stats.txt"; Expected Result: File contains next lines "Frank 1
+                                                                                                    Vova 1"
+
+Test Case 3:
+Step 1: Execute program ./main; Expected Result: Program starts
+Step 2: Enter the name "Matilda"; Expected Result: Program should display "Hello, Matilda"
+Step 3: Observe the output of the file "user_stats.txt"; Expected Result: File contains a single line "Matilda 1"
+Step 4: Enter the name "Matilda"; Expected Result: Program should display "Hello again(2), Matilda"
+Step 5: Observe the output of the file "user_stats.txt"; Expected Result: File contains a single line "Matilda 2"
+
+Test Case 4:
+Step 1: Execute program ./main; Expected Result: Program starts
+Step 2: Enter the name "Dazdraperma"; Expected Result: Program should display "Hello, Dazdraperma"
+Step 3: Observe the output of the file "user_stats.txt"; Expected Result: File contains a single line "Dazdraperma 1"
+Step 4: Enter "Dazdraperma wtfsdf"; Expected Result: Program should display "Usage: <name> or <name> delete or bread"
+Step 5: Enter empty input; Expected Result: Program should display "Input cannot be empty. Please try again."
+
+Test Case 5:
+Step 1: Execute program ./main; Expected Result: Program starts
+Step 2: Enter the name "Traktorina"; Expected Result: Program should display "Hello, Traktorina"
+Step 3: Observe the output of the file "user_stats.txt"; Expected Result: File contains a single line "Traktorina 1"
+Step 4: Enter "Traktorina delete"; Expected Result: Program should display "Statistics for Traktorina have been reset."
+Step 5: Observe the output of the file "user_stats.txt"; Expected Result: File NOT contains a line "Traktorina 1"
+
+Test Case 6:
+Step 1: Execute program ./main; Expected Result: Program starts
+Step 2: Enter the name "Pyatvchet"; Expected Result: Program should display "Hello, Pyatvchet"
+Step 3: Enter the name "Kima"; Expected Result: Program should display "Hello, Kima"
+Step 4: Observe the output of the file "user_stats.txt"; Expected Result: File contains lines "Pyatvchet 1
+                                                                                               Kima 1"
+Step 5: Enter input "bread"; Expected Result: Program should display "All history has been deleted."
+Step 6: Observe the output of the file "user_stats.txt"; Expected Result: File doesn't contains anything
