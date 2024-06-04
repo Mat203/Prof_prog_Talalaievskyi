@@ -1,10 +1,15 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <array>
 #include <vector>
 #include <string>
+#include <optional>
 
 using namespace std;
+
+constexpr int WIDTH = 5;
+constexpr int HEIGHT = 5;
 
 struct Pixel {
     int r, g, b;
@@ -12,86 +17,103 @@ struct Pixel {
     bool operator==(const Pixel& other) const {
         return r == other.r && g == other.g && b == other.b;
     }
+
+    bool IsValid() const {
+        return (r >= 0 && r <= 255) && (g >= 0 && g <= 255) && (b >= 0 && b <= 255);
+    }
 };
 
-const int WIDTH = 5;
-const int HEIGHT = 5;
+using ImageRow = std::array<Pixel, WIDTH>;
 
-bool readImage(const string& filename, vector<vector<Pixel>>& image, const string& outputFilename) {
-    ifstream inFile(filename);
-    ofstream outFile(outputFilename);
-    if (!inFile) {
-        cerr << "Unable to open input file." << endl;
-        return false;
+class Image {
+public:
+    Image() : image{} {} 
+
+    bool readImage(const string& filename, const string& outputFilename) {
+        ifstream inFile(filename);
+        ofstream outFile(outputFilename);
+        if (!inFile) {
+            cerr << "Unable to open input file." << endl;
+            return false;
+        }
+
+        for (int iRow = 0; iRow < HEIGHT; ++iRow) {
+            string line;
+            if (!getline(inFile, line)) {
+                cerr << "Unexpected end of file. Expected " << HEIGHT << " lines." << endl;
+                return false;
+            }
+
+            if (auto row = readRow(line)) {
+                image[iRow] = std::move(*row); 
+            } else {
+                cerr << "Error parsing row " << iRow + 1 << "." << endl;
+                return false;
+            }
+        }
+
+        if (inFile.fail()) {
+            cerr << "Error reading input file." << endl;
+            return false;
+        }
+
+        return true;
     }
 
-    string line;
-    int row = 0;
-    while (getline(inFile, line)) {
+    void writeImage(const string& filename) const {
+        ofstream outFile(filename);
+        if (!outFile) {
+            cerr << "Unable to open output file." << endl;
+            return;
+        }
+
+        for (const auto& row : image) {
+            for (size_t col = 0; col < row.size(); ++col) {
+                outFile << row[col].r << ',' << row[col].g << ',' << row[col].b;
+                if (col < row.size() - 1) {
+                    outFile << ' ';
+                }
+            }
+            outFile << '\n';
+        }
+    }
+
+    void applyFavoriteColor(const Pixel& favColor) {
+        for (int row = 0; row < HEIGHT; ++row) {
+            for (int col = 0; col < WIDTH; ++col) {
+                if (image[row][col] == favColor) {
+                    if (col > 0) {
+                        image[row][col - 1] = favColor;
+                    }
+                    if (row > 0) {
+                        image[row - 1][col] = favColor;
+                    }
+                }
+            }
+        }
+    }
+
+private:
+    std::array<ImageRow, HEIGHT> image; 
+    std::optional<ImageRow> readRow(const std::string& line) {
         stringstream ss(line);
-        vector<Pixel> pixelRow;
+        ImageRow row;
         for (int col = 0; col < WIDTH; ++col) {
             Pixel pixel;
             char comma;
-            ss >> pixel.r >> comma >> pixel.g >> comma >> pixel.b;
-            if (comma != ',' || pixel.r < 0 || pixel.r > 255 || pixel.g < 0 || pixel.g > 255 || pixel.b < 0 || pixel.b > 255) {
-                cerr << "Invalid input format at row " << row + 1 << ", column " << col + 1 << "." << endl;
-                return false;
+            if (!(ss >> pixel.r >> comma >> pixel.g >> comma >> pixel.b) || comma != ',') {
+                return std::nullopt; 
             }
-            pixelRow.push_back(pixel);
-        }
-        if (pixelRow.size() != WIDTH) {
-            cerr << "Input file should contain exactly " << WIDTH << " pixels per line." << endl;
-            return false;
-        }
-        image.push_back(pixelRow);
-        ++row;
-    }
-
-    if (row != HEIGHT || image.size() != HEIGHT) {
-        cerr << "Input file should contain exactly " << HEIGHT << " lines." << endl;
-        if (outFile) {
-            outFile << "Input file should contain exactly " << HEIGHT << " lines.";
-        }
-        return false;
-    }
-
-    return true;
-}
-
-
-void writeImage(const string& filename, const vector<vector<Pixel>>& image) {
-    ofstream outFile(filename);
-    if (!outFile) {
-        cerr << "Unable to open output file." << endl;
-        return;
-    }
-
-    for (const auto& row : image) {
-        for (size_t col = 0; col < row.size(); ++col) {
-            outFile << row[col].r << ',' << row[col].g << ',' << row[col].b;
-            if (col < row.size() - 1) {
-                outFile << ' ';
+            if (!pixel.IsValid()) {
+                return std::nullopt; 
             }
+            row[col] = pixel;
         }
-        outFile << '\n';
+        return row; 
     }
-}
+};
 
-void applyFavoriteColor(vector<vector<Pixel>>& image, const Pixel& favColor) {
-    for (int row = 0; row < HEIGHT; ++row) {
-        for (int col = 0; col < WIDTH; ++col) {
-            if (image[row][col] == favColor) {
-                if (col > 0) { 
-                    image[row][col - 1] = favColor;
-                }
-                if (row > 0) { 
-                    image[row - 1][col] = favColor;
-                }
-            }
-        }
-    }
-}
+
 
 int main() {
     string inputFilename, outputFilename;
@@ -101,24 +123,24 @@ int main() {
     cin >> inputFilename;
     cout << "Enter your favorite color (R G B): ";
     cin >> favR >> favG >> favB;
-    cout << "Enter output file name: ";
-    cin >> outputFilename;
 
-    if (favR < 0 || favR > 255 || favG < 0 || favG > 255 || favB < 0 || favB > 255) {
+    Pixel favColor = { favR, favG, favB };
+    if (!favColor.IsValid()) {
         cerr << "Favorite color values should be in the range 0-255." << endl;
         return 1;
     }
 
-    Pixel favColor = { favR, favG, favB };
+    cout << "Enter output file name: ";
+    cin >> outputFilename;
 
-    vector<vector<Pixel>> image;
-    if (!readImage(inputFilename, image, outputFilename)) {
-    return 1;
+    Image image;
+    if (!image.readImage(inputFilename, outputFilename)) {
+        return 1;
     }
 
-    applyFavoriteColor(image, favColor);
+    image.applyFavoriteColor(favColor);
 
-    writeImage(outputFilename, image);
+    image.writeImage(outputFilename);
 
     cout << "Image processing completed. Check the output file: " << outputFilename << endl;
 
