@@ -2,6 +2,21 @@
 
 swiftc main.swift -o main
 
+# Define input and output files for the test cases
+input_file_1="input1.txt"
+input_file_2="input2.txt"
+input_file_3="input3.txt"
+input_file_4="input4.txt"
+input_file_5="input5.txt"
+input_file_6="input6.txt"
+exptected_output="output.txt"
+output_file_1="output1.txt"
+output_file_2="output2.txt"
+output_file_3="output3.txt"
+output_file_4="output4.txt"
+output_file_5="output5.txt"
+output_file_6="output6.txt"
+
 run_test() {
     local input_file="$1"
     local fav_color="$2"
@@ -47,58 +62,26 @@ unfav_color="100 100 100"
 
 # Test Case 1: Pixels scattered with the favorite color at various positions
 fav_color="192 168 1"
-printf "0,0,0 0,0,0 0,255,0 100,100,100 255,0,0\n0,0,0 255,0,0 0,255,0 0,0,255 255,0,0\n255,0,0 0,255,0 192,168,1 255,0,0 255,0,0\n0,255,0 255,0,0 0,255,0 255,0,0 0,0,255\n100,100,100 255,0,0 0,255,0 192,168,1 255,0,0" > "$input_file"
-expected_output="0,0,0 0,0,0 0,255,0 100,100,100 255,0,0
-0,0,0 255,0,0 192,168,1 0,0,255 255,0,0
-255,0,0 192,168,1 192,168,1 255,0,0 255,0,0
-0,255,0 255,0,0 0,255,0 192,168,1 0,0,255
-100,100,100 255,0,0 192,168,1 192,168,1 255,0,0"
-run_test "$input_file" "$fav_color" "$output_file" "$no_choice" "$expected_output"
+run_test "$input_file_1" "$fav_color" "$output_file" "$no_choice" "$output_file_1"
 
 # Test Case 2: No Favorite Color in Image
 fav_color="192 168 1"
-printf "0,0,0 0,0,0 0,255,0 100,100,100 255,0,0\n0,0,0 255,0,0 0,255,0 0,0,255 255,0,0\n255,0,0 0,255,0 100,100,100 255,0,0 255,0,0\n0,255,0 255,0,0 0,255,0 255,0,0 0,0,255\n100,100,100 255,0,0 0,255,0 100,100,100 255,0,0" > "$input_file"
-expected_output="0,0,0 0,0,0 0,255,0 100,100,100 255,0,0
-0,0,0 255,0,0 0,255,0 0,0,255 255,0,0
-255,0,0 0,255,0 100,100,100 255,0,0 255,0,0
-0,255,0 255,0,0 0,255,0 255,0,0 0,0,255
-100,100,100 255,0,0 0,255,0 100,100,100 255,0,0"
-run_test "$input_file" "$fav_color" "$output_file" "$no_choice" "$expected_output"
+run_test "$input_file_2" "$fav_color" "$output_file" "$no_choice" "$output_file_2"
 
 # Test Case 3: All Pixels Are Favorite Color
 fav_color="192 168 1"
-printf "192,168,1 192,168,1 192,168,1 192,168,1 192,168,1\n192,168,1 192,168,1 192,168,1 192,168,1 192,168,1\n192,168,1 192,168,1 192,168,1 192,168,1 192,168,1\n192,168,1 192,168,1 192,168,1 192,168,1 192,168,1\n192,168,1 192,168,1 192,168,1 192,168,1 192,168,1" > "$input_file"
-expected_output="192,168,1 192,168,1 192,168,1 192,168,1 192,168,1
-192,168,1 192,168,1 192,168,1 192,168,1 192,168,1
-192,168,1 192,168,1 192,168,1 192,168,1 192,168,1
-192,168,1 192,168,1 192,168,1 192,168,1 192,168,1
-192,168,1 192,168,1 192,168,1 192,168,1 192,168,1"
-run_test "$input_file" "$fav_color" "$output_file" "$no_choice" "$expected_output"
+run_test "$input_file_3" "$fav_color" "$output_file" "$no_choice" "$output_file_3"
 
 # Test Case 4: Favorite Color at Specific Pattern (Diagonal)
 fav_color="192 168 1"
-printf "0,0,0 0,0,0 0,0,0 0,0,0 0,0,0\n0,0,0 192,168,1 0,0,0 0,0,0 0,0,0\n0,0,0 0,0,0 192,168,1 0,0,0 0,0,0\n0,0,0 0,0,0 0,0,0 192,168,1 0,0,0\n0,0,0 0,0,0 0,0,0 0,0,0 192,168,1" > "$input_file"
-expected_output="0,0,0 192,168,1 0,0,0 0,0,0 0,0,0
-192,168,1 192,168,1 192,168,1 0,0,0 0,0,0
-0,0,0 192,168,1 192,168,1 192,168,1 0,0,0
-0,0,0 0,0,0 192,168,1 192,168,1 192,168,1
-0,0,0 0,0,0 0,0,0 192,168,1 192,168,1"
-run_test "$input_file" "$fav_color" "$output_file" "$no_choice" "$expected_output"
+run_test "$input_file_4" "$fav_color" "$output_file" "$no_choice" "$output_file_4"
 
 # Test Case 5: Number of Lines Less Than Expected
 fav_color="192 168 1"
-printf "0,0,0 0,0,0 0,0,0 0,0,0 0,0,0\n0,0,0 192,168,1 0,0,0 0,0,0 0,0,0\n0,0,0 0,0,0 192,168,1 0,0,0 0,0,0\n0,0,0 0,0,0 0,0,0 192,168,1 0,0,0" > "$input_file" 
-expected_output="Input file should contain exactly 5 lines."
-run_test "$input_file" "$fav_color" "$output_file" "$no_choice" "$expected_output"
+run_test "$input_file_5" "$fav_color" "$output_file" "$no_choice" "$output_file_5"
 
 # Test Case 6: Using Unfavorable Color
 fav_color="192 168 1"
 unfav_color="100 100 100" 
-printf "0,0,0 0,0,0 0,255,0 100,100,100 255,0,0\n0,0,0 255,0,0 0,255,0 0,0,255 255,0,0\n255,0,0 0,255,0 192,168,1 255,0,0 255,0,0\n0,255,0 255,0,0 0,255,0 255,0,0 0,0,255\n100,100,100 255,0,0 0,255,0 192,168,1 255,0,0" > "$input_file"
-expected_output="0,0,0 0,0,0 0,255,0 192,168,1 255,0,0
-0,0,0 255,0,0 192,168,1 0,0,255 255,0,0
-255,0,0 192,168,1 192,168,1 255,0,0 255,0,0
-0,255,0 255,0,0 0,255,0 192,168,1 0,0,255
-192,168,1 255,0,0 192,168,1 192,168,1 255,0,0"
-run_test "$input_file" "$fav_color" "$output_file" "$y_choice" "$expected_output" "$unfav_color"
+run_test "$input_file_6" "$fav_color" "$output_file" "$y_choice" "$output_file_6" "$unfav_color"
 exit $?
