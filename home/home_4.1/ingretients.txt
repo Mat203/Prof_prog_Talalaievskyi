@@ -1,5 +1,0 @@
-Tomato,1.5
-Cheese,2.0
-Pepperoni,2.5
-Mushroom,1.0
-Bell Pepper,1.0
