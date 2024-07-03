@@ -3,6 +3,7 @@
 #include <fstream>
 #include <sstream>
 #include <map>
+#include <print>
 
 Pizza::Pizza() : total_price(0.0) {}
 
@@ -19,34 +20,37 @@ const std::vector<Ingredient>& Pizza::getIngredients() const {
     return ingredients;
 }
 
-PizzaBuilder::PizzaBuilder(const std::string& ingredientsFile) : ingredientsFile(ingredientsFile) {}
+PizzaBuilder::PizzaBuilder(const std::string& ingredientsFile) : ingredientsFile(ingredientsFile) {
+    loadIngredients();
+}
 
 Pizza PizzaBuilder::buildPizza() {
-    Pizza pizza;
-    loadIngredients();
-
-    std::cout << "Available ingredients:\n";
-    for (const auto& pair : ingredients) {
-        std::cout << "- " << pair.second.name << " ($" << pair.second.price << ")\n";
-    }
-
-    std::string input;
-    while (true) {
-        std::cout << "Enter ingredient name (or 'done' to finish): ";
-        std::getline(std::cin, input);
-        if (input == "done") {
-            break;
-        }
-
-        auto it = ingredients.find(input);
-        if (it != ingredients.end()) {
-            pizza.addIngredient(it->second);
-        } else {
-            std::cout << "Invalid ingredient name. Please choose from the list.\n";
-        }
-    }
-
     return pizza;
+}
+
+std::vector<std::string> PizzaBuilder::getAvailableIngredients() const {
+    std::vector<std::string> ingredientNames;
+    for (const auto& pair : ingredients) {
+        ingredientNames.push_back(pair.first);
+    }
+    return ingredientNames;
+}
+
+bool PizzaBuilder::addIngredientToPizza(const std::string& ingredientName) {
+    auto it = ingredients.find(ingredientName);
+    if (it != ingredients.end()) {
+        pizza.addIngredient(it->second);
+        return true;
+    } else {
+        return false;
+    }
+}
+
+void PizzaBuilder::displayAvailableIngredients() const {
+    std::println("Available ingredients:");
+    for (const auto& pair : ingredients) {
+        std::println("- {} (${})", pair.second.name, pair.second.price);
+    }
 }
 
 void PizzaBuilder::loadIngredients() {
@@ -63,6 +67,6 @@ void PizzaBuilder::loadIngredients() {
         }
         file.close();
     } else {
-        std::cerr << "Error opening ingredients file: " << ingredientsFile << std::endl;
+        std::println("Error opening ingredients file: {}", ingredientsFile);
     }
 }

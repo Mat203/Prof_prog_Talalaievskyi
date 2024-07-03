@@ -1,18 +1,36 @@
 #include <iostream>
-#include <pizza.hpp>
-#include <cassert>
+#include "pizza.hpp"
+#include <print>
+
+void interactWithUser(PizzaBuilder& builder) {
+    std::println("Welcome to the Pizza Builder!");
+    builder.displayAvailableIngredients();
+
+    std::string input;
+    while (true) {
+        std::print("Enter ingredient name (or 'done' to finish): ");
+        std::getline(std::cin, input);
+        if (input == "done") {
+            break;
+        }
+        if (!builder.addIngredientToPizza(input)) {
+            std::println("Invalid ingredient name. Please choose from the list.");
+        }
+    }
+}
 
 int main() {
-    std::cout << "Welcome to the Pizza Builder!\n";
     PizzaBuilder builder("ingredients.txt");
+    interactWithUser(builder);
+
     Pizza pizza = builder.buildPizza();
 
-    std::cout << "\nYour pizza contains:\n";
+    std::println("\nYour pizza contains:");
     for (const Ingredient& ingredient : pizza.getIngredients()) {
-        std::cout << ingredient.name << " ( $" << ingredient.price << " )\n";
+        std::println("{} ( ${} )", ingredient.name, ingredient.price);
     }
 
-    std::cout << "\nTotal price: $" << pizza.getTotalPrice() << std::endl;
+    std::println("\nTotal price: ${}", pizza.getTotalPrice());
 
     return 0;
 }
