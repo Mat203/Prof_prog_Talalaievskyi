@@ -7,15 +7,15 @@ struct Ingredient {
 
 class Pizza {
     private var ingredients: [Ingredient] = []
-    private var total_price: Double = 0.0
+    private var totalPrice: Double = 0.0
 
     func addIngredient(_ ingredient: Ingredient) {
         ingredients.append(ingredient)
-        total_price += ingredient.price
+        totalPrice += ingredient.price
     }
 
     func getTotalPrice() -> Double {
-        return total_price
+        return totalPrice
     }
 
     func getIngredients() -> [Ingredient] {
@@ -51,40 +51,20 @@ class PizzaBuilder {
         }
     }
 
-    func buildClassicPizza(type: String) -> Pizza? {
-        let classicPizzas = getClassicPizzaOptions()
-        guard let classicIngredients = classicPizzas[type] else {
-            return nil
-        }
-
-        let pizza = Pizza()
-        for ingredient in classicIngredients {
-            pizza.addIngredient(ingredient)
-        }
-        return pizza
+    func getAvailableIngredients() -> [String] {
+        return Array(ingredients.keys)
     }
 
-    func buildCustomPizza() -> Pizza {
-        let pizza = Pizza()
-        printAvailableIngredients()
-        
-        while true {
-            print("Enter ingredient name (or 'done' to finish): ", terminator: "")
-            guard let input = readLine(), !input.isEmpty else {
-                continue
-            }
-            if input.lowercased() == "done" {
-                break
-            }
-
-            if let ingredient = ingredients[input] {
-                pizza.addIngredient(ingredient)
-            } else {
-                print("Invalid ingredient name. Please choose from the list.")
-            }
+    func addIngredientToPizza(pizza: Pizza, ingredientName: String) -> Bool {
+        if let ingredient = ingredients[ingredientName] {
+            pizza.addIngredient(ingredient)
+            return true
         }
+        return false
+    }
 
-        return pizza
+    func buildPizza() -> Pizza {
+        return Pizza()
     }
 
     func getClassicPizzaOptions() -> [String: [Ingredient]] {
@@ -105,12 +85,5 @@ class PizzaBuilder {
                 Ingredient(name: "Bell Pepper", price: 1.0)
             ]
         ]
-    }
-
-    private func printAvailableIngredients() {
-        print("Available ingredients:")
-        for (name, ingredient) in ingredients {
-            print("\(name): \(ingredient.price)")
-        }
     }
 }

@@ -24,10 +24,14 @@ private:
 class PizzaBuilder {
 public:
     PizzaBuilder(const std::string& ingredientsFile);
-    Pizza buildPizza();
+    [[nodiscard]] Pizza buildPizza();
+    std::vector<std::string> getAvailableIngredients() const;
+    bool addIngredientToPizza(const std::string& ingredientName);
+    void displayAvailableIngredients() const;
 
 private:
     void loadIngredients();
     std::string ingredientsFile;
     std::map<std::string, Ingredient> ingredients;
+    Pizza pizza;
 };
