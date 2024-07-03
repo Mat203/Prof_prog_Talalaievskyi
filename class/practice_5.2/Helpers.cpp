@@ -1,5 +1,9 @@
 #include "Helpers.hpp"
-#include <stdexcept> 
+#include <stdexcept>
+#include <algorithm>
+
+std::mutex MegaDataPool::mutex_;
+MegaDataPool* MegaDataPool::instance = nullptr;
 
 MegaData::MegaData() {
   std::fill(smallArray.begin(), smallArray.end(), 42.0f);
@@ -28,6 +32,14 @@ std::array<double, 512 * 512>& MegaData::getBigArray() {
 }
 
 MegaDataPool::MegaDataPool(size_t poolSize) : pool(poolSize) {}
+
+MegaDataPool& MegaDataPool::getInstance(size_t poolSize) {
+  std::lock_guard<std::mutex> lock(mutex_);
+  if (instance == nullptr) {
+    instance = new MegaDataPool(poolSize);
+  }
+  return *instance;
+}
 
 MegaData& MegaDataPool::acquire() {
   if (usedObjects < pool.size()) {
