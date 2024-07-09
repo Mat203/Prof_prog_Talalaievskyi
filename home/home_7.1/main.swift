@@ -12,43 +12,140 @@ enum Command: String {
     case sad, fun, silly, dangerous
 }
 
-class MusicPlayer {
-    private var currentSong: Song = .intro
+protocol State {
+    var player: MusicPlayer { get }
+    func handleCommand(_ command: Command)
+    func onEnterState()
+}
+
+class IntroState: State {
+    unowned var player: MusicPlayer
     
-    init() {
-        print("Now playing: \(currentSong.rawValue)")
+    init(player: MusicPlayer) {
+        self.player = player
     }
     
     func handleCommand(_ command: Command) {
-        switch (currentSong, command) {
-        case (.intro, .dangerous):
-            currentSong = .letItBe
-        case (.intro, .fun):
-            currentSong = .starman
-        case (.intro, .sad):
-            currentSong = .inTheEnd
-        case (.starman, .silly):
-            currentSong = .intro
-        case (.starman, .dangerous):
-            currentSong = .showMustGoOn
-        case (.starman, .fun):
-            currentSong = .inTheEnd
-        case (.showMustGoOn, .sad):
-            currentSong = .letItBe
-        case (.showMustGoOn, .fun):
-            currentSong = .starman
-        case (.letItBe, .dangerous):
-            currentSong = .intro
-        case (.letItBe, .silly):
-            currentSong = .showMustGoOn
-        case (.inTheEnd, _):
-            print("Now playing: \(currentSong.rawValue)")
-            exit(0)
+        switch command {
+        case .dangerous:
+            player.transition(to: LetItBeState(player: player))
+        case .fun:
+            player.transition(to: StarmanState(player: player))
+        case .sad:
+            player.transition(to: InTheEndState(player: player))
         default:
             break
         }
-        
-        print("Now playing: \(currentSong.rawValue)")
+    }
+    
+    func onEnterState() {
+        print("Now playing: \(Song.intro.rawValue)")
+    }
+}
+
+class StarmanState: State {
+    unowned var player: MusicPlayer
+    
+    init(player: MusicPlayer) {
+        self.player = player
+    }
+    
+    func handleCommand(_ command: Command) {
+        switch command {
+        case .silly:
+            player.transition(to: IntroState(player: player))
+        case .dangerous:
+            player.transition(to: ShowMustGoOnState(player: player))
+        case .fun:
+            player.transition(to: InTheEndState(player: player))
+        default:
+            break
+        }
+    }
+    
+    func onEnterState() {
+        print("Now playing: \(Song.starman.rawValue)")
+    }
+}
+
+class ShowMustGoOnState: State {
+    unowned var player: MusicPlayer
+    
+    init(player: MusicPlayer) {
+        self.player = player
+    }
+    
+    func handleCommand(_ command: Command) {
+        switch command {
+        case .sad:
+            player.transition(to: LetItBeState(player: player))
+        case .fun:
+            player.transition(to: StarmanState(player: player))
+        default:
+            break
+        }
+    }
+    
+    func onEnterState() {
+        print("Now playing: \(Song.showMustGoOn.rawValue)")
+    }
+}
+
+class LetItBeState: State {
+    unowned var player: MusicPlayer
+    
+    init(player: MusicPlayer) {
+        self.player = player
+    }
+    
+    func handleCommand(_ command: Command) {
+        switch command {
+        case .dangerous:
+            player.transition(to: IntroState(player: player))
+        case .silly:
+            player.transition(to: ShowMustGoOnState(player: player))
+        default:
+            break
+        }
+    }
+    
+    func onEnterState() {
+        print("Now playing: \(Song.letItBe.rawValue)")
+    }
+}
+
+class InTheEndState: State {
+    unowned var player: MusicPlayer
+    
+    init(player: MusicPlayer) {
+        self.player = player
+    }
+    
+    func handleCommand(_ command: Command) {
+        print("Now playing: \(Song.inTheEnd.rawValue)")
+        exit(0)
+    }
+    
+    func onEnterState() {
+        print("Now playing: \(Song.inTheEnd.rawValue)")
+    }
+}
+
+class MusicPlayer {
+    private var state: State
+    
+    init() {
+        self.state = IntroState(player: self)
+        state.onEnterState()
+    }
+    
+    func transition(to newState: State) {
+        self.state = newState
+        newState.onEnterState()
+    }
+    
+    func handleCommand(_ command: Command) {
+        state.handleCommand(command)
     }
 }
 
