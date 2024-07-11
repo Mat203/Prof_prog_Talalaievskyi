@@ -1,4 +1,4 @@
-#include <iostream>
+#include <print>
 
 template<typename T>
 concept PricedItem = requires(T t) {
@@ -13,7 +13,7 @@ public:
     void printTotalPrice(const T1& obj1, const T2& obj2) const {
         double totalPrice = PRIORITY * obj1.getCoefficient() * obj1.getBasePrice() +
                             obj2.getCoefficient() * obj2.getBasePrice();
-        std::cout << "Total Price: " << totalPrice << std::endl;
+        std::println("Total Price: {}", totalPrice);
     }
 };
 
